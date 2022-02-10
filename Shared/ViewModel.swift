@@ -28,6 +28,8 @@ class MainViewModel: ObservableObject {
     
     // MARK:  Initializer Dependency injestion
     @Published var gifs = [GifCollectionViewCellViewModel]()
+    @Published var gif: GifViewCellViewModel?
+    @Published var gifDetail: Bool?
     
     var appiCall: ApiProvider?
     
@@ -69,6 +71,19 @@ class MainViewModel: ObservableObject {
             case .success(let linkdata):
                 let d = linkdata.data.map({ return GifCollectionViewCellViewModel(id: $0.id, title: $0.title, rating: $0.rating, Image: $0.images?.fixed_height?.url, url: $0.url) })
                 self.gifs = d
+            }
+        })
+    }
+    
+    func searchGifId(gifID: String){
+        appiCall?.getRequest(urlParams: [:], gifAcces: gifID, decodable: APGifResponse.self, completion: { result in
+            switch result {
+            case .failure(let error):
+                debugPrint("server error : \(error.localizedDescription)")
+            case .success(let linkdata):
+                let d = GifViewCellViewModel(id: linkdata.data.id, title: linkdata.data.title, rating: linkdata.data.rating, Image: linkdata.data.images?.fixed_height?.url, video: linkdata.data.images?.fixed_height?.mp4, url: linkdata.data.url)
+                self.gif = d
+                self.gifDetail = true
             }
         })
     }

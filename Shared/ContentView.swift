@@ -10,6 +10,7 @@ import SwiftUI
 struct ContentView: View {
     
     @StateObject private var gifs = MainViewModel()
+    @State private var gifDetail = false
     
     let mySerialQueue = DispatchQueue(label: "serialqueue", attributes: .concurrent)
     
@@ -18,20 +19,26 @@ struct ContentView: View {
        
             
         mySerialQueue.sync {
-        print("Step 1")
+            debugPrint("Step 1")
             self.gifs.loadGift()
             print("Step 1 end")
         }
-        mySerialQueue.sync { 
-        print("Step 2")
-            //self.gifs.search(search: "love")
-            print("Step 2 end")
-        }
-        mySerialQueue.asyncAfter(deadline: .now()+5, execute: {
-            print("Step 3")
+        
+        mySerialQueue.asyncAfter(deadline: .now()+1, execute: {
+            debugPrint("Step 2")
                 //self.gifs.loadGift()
                 self.gifs.search(search: "love")
-                print("Step 3 end")
+            debugPrint("Step 2 end")
+        })
+        
+        mySerialQueue.asyncAfter(deadline: .now()+2, execute: {
+            //.sync {
+            debugPrint("Step 3")
+            print("Step 3 \(String(describing: self.gifs.gifs[10].title))")
+            let searchId = self.gifs.gifs[10].id
+            self.gifs.searchGifId(gifID: searchId!)
+            self.gifDetail = true
+            debugPrint("Step 3 end")
         })
        
     }
@@ -41,9 +48,14 @@ struct ContentView: View {
         NavigationView{
             ScrollViewReader { proxy in
                 GeometryReader { geometry in
+                    if let tit = self.gifs.gif?.title{
+                    NavigationLink(destination: VStack{Text("Detail View \(tit)")}, isActive: self.$gifDetail) {
+                            Text("").frame(width: 0, height: 0)
+                        }
+                    }
+                    
                     VStack(alignment: .leading, spacing: 8, content: {
                         
-                   
                         // MARK: Gifs
                         Section(header: VStack(alignment: .leading, spacing: 8){
                             Text("Gifs Traiding").font(.body).foregroundColor(.purple).fontWeight(.bold)
