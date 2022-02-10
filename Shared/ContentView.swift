@@ -18,11 +18,12 @@ struct ContentView: View {
         debugPrint("load gifs")
        
             
-        mySerialQueue.sync {
+        mySerialQueue.asyncAfter(deadline: .now(), execute: {
+            //.sync {
             debugPrint("Step 1")
             self.gifs.loadGift()
             print("Step 1 end")
-        }
+        })
         
         mySerialQueue.asyncAfter(deadline: .now()+1, execute: {
             debugPrint("Step 2")
