@@ -65,15 +65,18 @@ class UrlImageModel: ObservableObject {
             debugPrint("No data found")
             return
         }
+        guard let loadedImage = UIImage(data: data) else {
+            return
+        }
         
         DispatchQueue.main.async {
-            guard let loadedImage = UIImage(data: data) else {
-                return
-            }
             
             self.imageCache.set(forKey: self.urlString!.path, image: loadedImage)
             self.image = loadedImage
         }
+    }
+    deinit{
+        debugPrint("UrlImageModel deinit")
     }
 }
 
@@ -91,6 +94,9 @@ class ImageCache {
     func delete(forKey: String) {
         cache.removeObject(forKey: forKey as NSString)
     }
+    deinit{
+        debugPrint("ImageCache deinit")
+    }
 }
 
 extension ImageCache {
@@ -104,7 +110,7 @@ extension ImageCache {
 
 struct UrlImageView: View {
     @ObservedObject var urlImageModel: UrlImageModel
-    
+    static var defaultImage = UIImage(named: "musicartisy.svg")
     init(urlString: URL) {
         urlImageModel = UrlImageModel(urlString: urlString)
     }
@@ -122,5 +128,5 @@ struct UrlImageView: View {
         //.ignoresSafeArea()
     }
     
-    static var defaultImage = UIImage(named: "musicartisy.svg")
+    
 }

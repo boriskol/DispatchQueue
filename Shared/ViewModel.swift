@@ -87,7 +87,9 @@ class MainViewModel: ObservableObject {
             }
         })
     }
-    
+    deinit{
+        debugPrint("MainViewModel deinit")
+    }
 }
 
 // MARK: DetailViewModel
