@@ -50,7 +50,7 @@ class UrlImageModel: ObservableObject {
         guard let urlString1 = self.urlString else {
             return
         }
-            let task = URLSession.shared.dataTask(with: urlString1, completionHandler: getImageFromResponse(data:response:error:))
+        let task = URLSession.shared.dataTask(with: urlString1, completionHandler: getImageFromResponse(data:response:error:))
                 task.resume()
         
     }
